@@ -17,6 +17,9 @@ RUN set -eux; \
       wget -qO /tmp/steamcmd_linux.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz; \
       tar -xzf /tmp/steamcmd_linux.tar.gz -C /opt/steamcmd; \
       rm -f /tmp/steamcmd_linux.tar.gz; \
+      # ensure extracted files are readable/executable by non-root users
+      chmod -R a+rx /opt/steamcmd || true; \
+      chown -R root:root /opt/steamcmd || true; \
     fi; \
     rm -rf /var/lib/apt/lists/* || true
 
