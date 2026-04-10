@@ -9,8 +9,8 @@ ENV DST_DIR=/opt/dst_server
 ENV DATA_DIR=/data
 
 # Install DST dependencies (32-bit libraries)
-# Based on official requirements and community knowledge for DST Dedicated Server
 RUN set -eux; \
+    dpkg --add-architecture i386; \
     apt-get update -y; \
     apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -21,11 +21,10 @@ RUN set -eux; \
         lib32stdc++6 \
         libc6-i386 \
         libcurl4-gnutls-dev:i386 \
-        libtinfo5:i386; \
+        libtinfo6:i386; \
     rm -rf /var/lib/apt/lists/* || true
 
 # The base image cm2network/steamcmd:root already has steamcmd in /home/steam/steamcmd/steamcmd.sh
-# We will create a symlink or wrapper for convenience.
 RUN mkdir -p /opt/steamcmd && \
     ln -s /home/steam/steamcmd/steamcmd.sh /usr/local/bin/steamcmd
 
