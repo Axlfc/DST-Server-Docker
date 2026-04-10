@@ -87,8 +87,8 @@ fi
 if [ -z "$SERVER_BIN" ]; then
   echo "No server binary found in $DST_DIR. Listing tree for debugging:"
   ls -la "$DST_DIR" || true
-  echo "Dropping to shell for debugging."
-  exec /bin/bash
+  echo "SteamCMD didn't produce server files. Exiting with error."
+  exit 1
 fi
 
 echo "Starting server: $SERVER_BIN"
