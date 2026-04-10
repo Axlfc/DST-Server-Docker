@@ -1,51 +1,33 @@
 services:
   dst-master:
     build: .
-    image: dst-server:local
     container_name: dst-master
     restart: unless-stopped
     ports:
       - "10999:10999/udp"
-      - "12346:12346/udp"
-    env_file:
-      - .env
+    env_file: .env
     environment:
-      - CLUSTER_NAME=DoNotStarveTogether
-      - CLUSTER_DIR=Cluster_1
       - SHARD_NAME=Master
+      - SKIP_UPDATE=false
     volumes:
       - ./dst-data:/data
-      - dst-server-files:/opt/dst_server
-    deploy:
-      resources:
-        limits:
-          memory: 2G
+      - dst-bin:/opt/dst_server
 
   dst-caves:
     build: .
-    image: dst-server:local
     container_name: dst-caves
     restart: unless-stopped
     depends_on:
       - dst-master
     ports:
       - "11000:11000/udp"
-      - "12347:12347/udp"
-    env_file:
-      - .env
+    env_file: .env
     environment:
-      - CLUSTER_NAME=DoNotStarveTogether
-      - CLUSTER_DIR=Cluster_1
       - SHARD_NAME=Caves
-      # Skip update in the second container to avoid race conditions on the shared volume
       - SKIP_UPDATE=true
     volumes:
       - ./dst-data:/data
-      - dst-server-files:/opt/dst_server
-    deploy:
-      resources:
-        limits:
-          memory: 2G
+      - dst-bin:/opt/dst_server
 
 volumes:
-  dst-server-files:
+  dst-bin:

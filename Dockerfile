@@ -1,43 +1,23 @@
 FROM cm2network/steamcmd:root
 
-LABEL maintainer="DST-Server-Docker <noreply@example.com>"
-
-ENV DEBIAN_FRONTEND=noninteractive
-ENV LANG=C.UTF-8
-ENV LC_ALL=C.UTF-8
 ENV DST_DIR=/opt/dst_server
 ENV DATA_DIR=/data
 
-# Install DST dependencies (32-bit libraries)
 RUN set -eux; \
-    dpkg --add-architecture i386; \
-    apt-get update -y; \
+    apt-get update; \
     apt-get install -y --no-install-recommends \
-        ca-certificates \
-        wget \
-        tar \
-        bzip2 \
-        lib32gcc-s1 \
-        lib32stdc++6 \
-        libc6-i386 \
-        libcurl4-gnutls-dev:i386 \
-        libtinfo6:i386; \
-    rm -rf /var/lib/apt/lists/* || true
+        libcurl4-gnutls-dev libtinfo6 libcurl4 wget tar ca-certificates \
+        libstdc++6 libgcc-s1 lib32gcc-s1 lib32stdc++6; \
+    rm -rf /var/lib/apt/lists/*
 
-# The base image cm2network/steamcmd:root already has steamcmd in /home/steam/steamcmd/steamcmd.sh
-RUN mkdir -p /opt/steamcmd && \
-    ln -s /home/steam/steamcmd/steamcmd.sh /usr/local/bin/steamcmd
+RUN mkdir -p ${DST_DIR}/mods ${DATA_DIR} \
+    && chown -R steam:steam ${DST_DIR} ${DATA_DIR}
 
-RUN useradd -m -s /bin/bash dst \
-    && mkdir -p ${DST_DIR} ${DATA_DIR} \
-    && chown -R dst:dst ${DST_DIR} ${DATA_DIR} /home/steam/steamcmd
-
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY --chown=steam:steam dedicated_server_mods_setup.lua ${DST_DIR}/mods/dedicated_server_mods_setup.lua
+COPY --chown=steam:steam docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-USER dst
-WORKDIR /home/dst
-
-EXPOSE 10999/udp 11000/udp 12346/udp 12347/udp
+USER steam
+WORKDIR /home/steam
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
