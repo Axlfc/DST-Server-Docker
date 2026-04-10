@@ -7,12 +7,15 @@ services:
     ports:
       - "10999:10999/udp"
       - "12346:12346/udp"
-    # No persistent host or named volumes: keep container ephemeral
+    env_file:
+      - .env
     environment:
       - CLUSTER_NAME=DoNotStarveTogether
       - CLUSTER_DIR=Cluster_1
       - SHARD_NAME=Master
-      - FORCE_UPDATE=true
+    volumes:
+      - ./dst-data:/data
+      - dst-server-files:/opt/dst_server
     deploy:
       resources:
         limits:
@@ -28,16 +31,21 @@ services:
     ports:
       - "11000:11000/udp"
       - "12347:12347/udp"
-    # No persistent host or named volumes: keep container ephemeral
+    env_file:
+      - .env
     environment:
       - CLUSTER_NAME=DoNotStarveTogether
       - CLUSTER_DIR=Cluster_1
       - SHARD_NAME=Caves
-      # IMPORTANTE: Saltamos el update para que no choque con el master
+      # Skip update in the second container to avoid race conditions on the shared volume
       - SKIP_UPDATE=true
+    volumes:
+      - ./dst-data:/data
+      - dst-server-files:/opt/dst_server
     deploy:
       resources:
         limits:
           memory: 2G
 
-# No persistent volumes defined — the container will start with a clean filesystem
+volumes:
+  dst-server-files:
