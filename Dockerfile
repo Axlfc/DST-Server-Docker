@@ -12,20 +12,22 @@ ENV DATA_DIR=/data
 RUN set -eux; \
     apt-get update -y; \
     apt-get install -y --no-install-recommends ca-certificates wget tar bzip2 lib32gcc-s1 lib32stdc++6 libc6-i386; \
-        mkdir -p /opt/steamcmd; \
-        if [ ! -f /opt/steamcmd/steamcmd.sh ]; then \
-            wget -qO /tmp/steamcmd_linux.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz; \
-            tar -xzf /tmp/steamcmd_linux.tar.gz -C /opt/steamcmd; \
-            rm -f /tmp/steamcmd_linux.tar.gz; \
-        fi; \
-        # create a small wrapper so steamcmd runs from its own directory
-        cat > /usr/local/bin/steamcmd <<'EOF'
+    mkdir -p /opt/steamcmd; \
+    if [ ! -f /opt/steamcmd/steamcmd.sh ]; then \
+      wget -qO /tmp/steamcmd_linux.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz; \
+      tar -xzf /tmp/steamcmd_linux.tar.gz -C /opt/steamcmd; \
+      rm -f /tmp/steamcmd_linux.tar.gz; \
+    fi; \
+    rm -rf /var/lib/apt/lists/* || true
+
+# Create a small wrapper so steamcmd runs from its own directory
+RUN cat > /usr/local/bin/steamcmd <<'EOF'
 #!/usr/bin/env bash
 cd /opt/steamcmd || exit 1
 exec ./steamcmd.sh "$@"
 EOF
-        chmod +x /usr/local/bin/steamcmd; \
-        rm -rf /var/lib/apt/lists/* || true
+
+RUN chmod +x /usr/local/bin/steamcmd
 
 RUN useradd -m -s /bin/bash dst \
     && mkdir -p ${DST_DIR} ${DATA_DIR} \
