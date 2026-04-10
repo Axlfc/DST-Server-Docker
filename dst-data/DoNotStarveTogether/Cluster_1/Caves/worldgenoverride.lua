@@ -1,12 +1,18 @@
-KLEI     1 return {
-	override_enabled = true,
-	worldgen_preset = "DST_CAVE",
-	settings_preset = "DST_CAVE",
-	overrides = {
-		basicresource_regrowth = "always",
-		ghostsanitydrain = "none",
-		portalresurection = "always",
-		resettime = "none",
-		start_location = "default",
-	},
+return {
+    override_enabled = true,
+    preset = "DST_CAVE",
+    overrides = {
+        world_size = "default",
+        branching = "default",
+        loop = "default",
+
+        wormattacks = "default",
+        earthquakes = "default",
+        tentacles = "default",
+
+        monkey = "default",
+        mushtree = "default",
+
+        fern = "often"
+    }
 }

@@ -5,12 +5,14 @@ services:
     restart: unless-stopped
     ports:
       - "10999:10999/udp"
+      - "10888:10888/udp" # Inter-shard communication
     env_file: .env
     environment:
       - SHARD_NAME=Master
       - SKIP_UPDATE=false
     volumes:
       - ./dst-data:/data
+      - ./dedicated_server_mods_setup.lua:/opt/dst_server/mods/dedicated_server_mods_setup.lua
       - dst-bin:/opt/dst_server
 
   dst-caves:
@@ -27,6 +29,7 @@ services:
       - SKIP_UPDATE=true
     volumes:
       - ./dst-data:/data
+      - ./dedicated_server_mods_setup.lua:/opt/dst_server/mods/dedicated_server_mods_setup.lua
       - dst-bin:/opt/dst_server
 
 volumes:

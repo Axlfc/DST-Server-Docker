@@ -13,7 +13,6 @@ RUN set -eux; \
 RUN mkdir -p ${DST_DIR}/mods ${DATA_DIR} \
     && chown -R steam:steam ${DST_DIR} ${DATA_DIR}
 
-COPY --chown=steam:steam dedicated_server_mods_setup.lua ${DST_DIR}/mods/dedicated_server_mods_setup.lua
 COPY --chown=steam:steam docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
