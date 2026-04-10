@@ -1,0 +1,92 @@
+[00:00:00]: PersistRootStorage is now /data//DoNotStarveTogether/Cluster_1/Master/ 
+[00:00:00]: Starting Up
+[00:00:00]: Version: 506376
+[00:00:00]: Current time: Fri Apr 10 15:37:01 2026
+
+[00:00:00]: System Name: Linux
+[00:00:00]: Host Name: 1db3b45a3492
+[00:00:00]: Release(Kernel) Version: 6.17.0-20-generic
+[00:00:00]: Kernel Build Timestamp: #20~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Mar 19 01:28:37 UTC 2
+[00:00:00]: Machine Arch: x86_64
+[00:00:00]: Don't Starve Together: 506376 LINUX
+[00:00:00]: Build Date: 8002
+[00:00:00]: Mode: 32-bit
+[00:00:00]: Parsing command line
+[00:00:00]: Command Line Arguments: -skip_update_server_mods -persistent_storage_root /data -ugc_directory /data/ugc -cluster Cluster_1 -shard Master 
+[00:00:00]: Initializing distribution platform
+[00:00:00]: ....Done
+[00:00:00]: THREAD - started 'GAClient' (3884469056)
+[00:00:00]: CurlRequestManager::ClientThread::Main()
+[00:00:00]: Mounting file system databundles/klump.zip successful.
+[00:00:00]: Mounting file system databundles/shaders.zip successful.
+[00:00:00]: Mounting file system databundles/fonts.zip successful.
+[00:00:00]: Mounting file system databundles/anim_dynamic.zip successful.
+[00:00:00]: Mounting file system databundles/bigportraits.zip successful.
+[00:00:00]: Mounting file system databundles/images.zip successful.
+[00:00:00]: Mounting file system databundles/scripts.zip successful.
+[00:00:00]: [Steam] SteamGameServer_Init(10999, 12346)
+[00:00:00]: [Steam] SteamGameServer_Init success
+[00:00:00]: ProfileIndex:0.41
+[00:00:00]: [Connect] PendingConnection::Reset(true)
+[00:00:00]: THREAD - started 'Ping Job Thread' (3821009728)
+[00:00:00]: Platform: 1
+[00:00:00]: Network tick rate: U=15(2), D=0
+[00:00:00]: Network tick rate: U=15(2), D=0
+[00:00:00]: THREAD - started 'StreamInput' (3816815424)
+[00:00:00]: OnLoadPermissionList: /data//DoNotStarveTogether/Cluster_1/blocklist.txt (Success)
+[00:00:00]: OnLoadPermissionList: /data//DoNotStarveTogether/Cluster_1/adminlist.txt (Success)
+[00:00:00]: OnLoadUserIdList: /data//DoNotStarveTogether/Cluster_1/whitelist.txt (Success)
+[00:00:00]: Token file not found: /data//DoNotStarveTogether/Cluster_1/cluster_token.txt, success: T, len: 0
+[00:00:00]: Token file not found: /data//DoNotStarveTogether/Cluster_1/cluster_token.txt, success: T, len: 0
+[00:00:00]: cGame::InitializeOnMainThread
+[00:00:00]: Renderer initialize: Okay
+[00:00:00]: AnimManager initialize: Okay
+[00:00:00]: Buffers initialize: Okay
+[00:00:00]: cDontStarveGame::DoGameSpecificInitialize()
+[00:00:00]: GameSpecific initialize: Okay
+[00:00:00]: cGame::StartPlaying
+[00:00:00]: AppVersion::GetArchitecture() x32
+[00:00:00]: LOADING LUA
+[00:00:00]: DoLuaFile scripts/main.lua
+[00:00:00]: DoLuaFile loading buffer scripts/main.lua
+[00:00:00]:   taskgrouplist:	default	Together	
+[00:00:00]:   taskgrouplist:	classic	Classic	
+[00:00:00]:   taskgrouplist:	cave_default	Underground	
+[00:00:00]:   taskgrouplist:	lavaarena_taskset	The Forge	
+[00:00:00]:   taskgrouplist:	quagmire_taskset	The Gorge	
+[00:00:00]: Running main.lua
+	
+[00:00:00]: Could not load modindex	
+[00:00:00]: ModIndex: Beginning normal load sequence for dedicated server.
+	
+[00:00:00]: Event data unavailable: lavaarena_event_server/lavaarena_achievement_quest_defs
+[00:00:01]: LOADING LUA SUCCESS
+[00:00:01]: PlayerDeaths could not load morgue	
+[00:00:01]: PlayerHistory could not load player_history	
+[00:00:01]: ServerPreferences could not load server_preferences	
+[00:00:01]: bloom_enabled	true	
+[00:00:01]: OnFilesLoaded()	
+[00:00:01]: OnUpdatePurchaseStateComplete	
+[00:00:01]: Klump load on boot started.	
+[00:00:01]: Klump files loaded: 	0	
+[00:00:01]: 	Load FE	
+[00:00:01]: THREAD - started 'FilesExistAsyncThread' (3788503872)
+[00:00:01]: FilesExistAsyncThread started (19542 files)...
+[00:00:01]: 	Load FE: done	
+[00:00:01]: Check for write access: TRUE
+[00:00:01]: Check for read access: TRUE
+[00:00:01]: Available disk space for save files: 1733128 MB
+[00:00:01]: ModIndex: Load sequence finished successfully.	
+[00:00:01]: Reset() returning
+[00:00:01]: ... FilesExistAsyncThread complete
+[00:00:01]: [200] Account Failed (6): "E_INVALID_TOKEN"
+[00:00:01]: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[00:00:01]: !!!! Your Server Will Not Start !!!!
+[00:00:01]: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[00:00:01]: No auth token could be found.
+[00:00:01]: Please visit https://accounts.klei.com/account/game/servers?game=DontStarveTogether
+[00:00:01]: to generate server configuration files
+[00:00:01]: 
+[00:00:01]: Alternatively generate a cluster_token you can
+[00:00:01]: open the console from a logged-in game
+[00:00:01]: client with the tilda key (~ / 

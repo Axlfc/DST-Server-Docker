@@ -1,0 +1,36 @@
+services:
+  dst-master:
+    image: jamesits/dst-server:latest
+    container_name: dst-master
+    restart: unless-stopped
+    ports:
+      - "10999:10999/udp"
+      - "12346:12346/udp"
+    volumes:
+      - ./dst-data:/data
+      - dst-steam-master:/opt/dst_server  # <-- añade esto
+    environment:
+      CLUSTER_NAME: DoNotStarveTogether
+      CLUSTER_DIR: DoNotStarveTogether
+      SHARD_NAME: Master
+
+  dst-caves:
+    image: jamesits/dst-server:latest
+    container_name: dst-caves
+    restart: unless-stopped
+    depends_on:
+      - dst-master
+    ports:
+      - "11000:11000/udp"
+      - "12347:12347/udp"
+    volumes:
+      - ./dst-data:/data
+      - dst-steam-caves:/opt/dst_server  # <-- añade esto
+    environment:
+      CLUSTER_NAME: DoNotStarveTogether
+      CLUSTER_DIR: DoNotStarveTogether
+      SHARD_NAME: Caves
+
+volumes:
+  dst-steam-master:
+  dst-steam-caves:
