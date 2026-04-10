@@ -1,10 +1,10 @@
 [00:00:00]: PersistRootStorage is now /data//DoNotStarveTogether/Cluster_1/Master/ 
 [00:00:00]: Starting Up
 [00:00:00]: Version: 506376
-[00:00:00]: Current time: Fri Apr 10 15:44:37 2026
+[00:00:00]: Current time: Fri Apr 10 16:11:47 2026
 
 [00:00:00]: System Name: Linux
-[00:00:00]: Host Name: bfc83a472723
+[00:00:00]: Host Name: afaces
 [00:00:00]: Release(Kernel) Version: 6.17.0-20-generic
 [00:00:00]: Kernel Build Timestamp: #20~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Mar 19 01:28:37 UTC 2
 [00:00:00]: Machine Arch: x86_64
@@ -15,9 +15,9 @@
 [00:00:00]: Command Line Arguments: -skip_update_server_mods -persistent_storage_root /data -ugc_directory /data/ugc -cluster Cluster_1 -shard Master 
 [00:00:00]: Initializing distribution platform
 [00:00:00]: ....Done
-[00:00:00]: THREAD - started 'GAClient' (3874863936)
-[00:00:00]: CurlRequestManager::ClientThread::Main()
+[00:00:00]: THREAD - started 'GAClient' (3935509312)
 [00:00:00]: Mounting file system databundles/klump.zip successful.
+[00:00:00]: CurlRequestManager::ClientThread::Main()
 [00:00:00]: Mounting file system databundles/shaders.zip successful.
 [00:00:00]: Mounting file system databundles/fonts.zip successful.
 [00:00:00]: Mounting file system databundles/anim_dynamic.zip successful.
@@ -26,13 +26,13 @@
 [00:00:00]: Mounting file system databundles/scripts.zip successful.
 [00:00:00]: [Steam] SteamGameServer_Init(10999, 12346)
 [00:00:00]: [Steam] SteamGameServer_Init success
-[00:00:00]: ProfileIndex:0.47
+[00:00:00]: ProfileIndex:0.71
 [00:00:00]: [Connect] PendingConnection::Reset(true)
-[00:00:00]: THREAD - started 'Ping Job Thread' (3811572544)
+[00:00:00]: THREAD - started 'Ping Job Thread' (3871341376)
 [00:00:00]: Platform: 1
 [00:00:00]: Network tick rate: U=15(2), D=0
 [00:00:00]: Network tick rate: U=15(2), D=0
-[00:00:00]: THREAD - started 'StreamInput' (3807378240)
+[00:00:00]: THREAD - started 'StreamInput' (3867147072)
 [00:00:00]: OnLoadPermissionList: /data//DoNotStarveTogether/Cluster_1/blocklist.txt (Success)
 [00:00:00]: OnLoadPermissionList: /data//DoNotStarveTogether/Cluster_1/adminlist.txt (Success)
 [00:00:00]: OnLoadUserIdList: /data//DoNotStarveTogether/Cluster_1/whitelist.txt (Success)
@@ -70,12 +70,12 @@
 [00:00:00]: Klump load on boot started.	
 [00:00:00]: Klump files loaded: 	0	
 [00:00:01]: 	Load FE	
-[00:00:01]: THREAD - started 'FilesExistAsyncThread' (3776969536)
-[00:00:01]: FilesExistAsyncThread started (19542 files)...
+[00:00:01]: THREAD - started 'FilesExistAsyncThread' (3837786944)
 [00:00:01]: 	Load FE: done	
+[00:00:01]: FilesExistAsyncThread started (19542 files)...
 [00:00:01]: Check for write access: TRUE
 [00:00:01]: Check for read access: TRUE
-[00:00:01]: Available disk space for save files: 1727764 MB
+[00:00:01]: Available disk space for save files: 1722340 MB
 [00:00:01]: ModIndex: Load sequence finished successfully.	
 [00:00:01]: Reset() returning
 [00:00:01]: ... FilesExistAsyncThread complete
@@ -110,7 +110,7 @@
 [00:00:01]: Not applying level data overrides.	
 [00:00:01]: Found a worldgen override file with these contents:	
 [00:00:01]: 	K: 	override_enabled	 V: 	true	
-[00:00:01]: 	K: 	overrides	 V: 	table: 0xdf6ab50	
+[00:00:01]: 	K: 	overrides	 V: 	table: 0xe7749f0	
 [00:00:01]: 	K: 	settings_preset	 V: 	SURVIVAL_TOGETHER	
 [00:00:01]: 	K: 	worldgen_preset	 V: 	SURVIVAL_TOGETHER	
 [00:00:01]:   sanity-checking worldgenoverride.lua...	
@@ -119,7 +119,7 @@
 [00:00:01]:   contained settings preset SURVIVAL_TOGETHER, loading...	
 [00:00:01]: Overwriting savedata with override file.	
 [00:00:01]: Collecting garbage...
-[00:00:01]: lua_gc took 0.01 seconds
+[00:00:01]: lua_gc took 0.02 seconds
 [00:00:01]: ~ShardLuaProxy()
 [00:00:01]: ~cEventLeaderboardProxy()
 [00:00:01]: ~ItemServerLuaProxy()
@@ -152,16 +152,16 @@
 [00:00:01]: bloom_enabled	true	
 [00:00:01]: OnFilesLoaded()	
 [00:00:01]: OnUpdatePurchaseStateComplete	
-[00:00:01]: Loading world: session/DFC16FD9EF361629/0000000003	
-[00:00:02]: Save file is at version 5.1	
-[00:00:02]: Klump load on boot started.	
-[00:00:02]: Klump files loaded: 	0	
-[00:00:02]: 	Unload FE	
-[00:00:02]: 	Unload FE done	
+[00:00:01]: Loading world: session/DFC16FD9EF361629/0000000006	
+[00:00:01]: Save file is at version 5.1	
+[00:00:01]: Klump load on boot started.	
+[00:00:01]: Klump files loaded: 	0	
+[00:00:01]: 	Unload FE	
+[00:00:01]: 	Unload FE done	
 [00:00:02]: 	LOAD BE	
-[00:00:05]: 	LOAD BE: done	
-[00:00:05]: Begin Session: DFC16FD9EF361629
-[00:00:05]: saving to server_temp/server_save	
+[00:00:04]: 	LOAD BE: done	
+[00:00:04]: Begin Session: DFC16FD9EF361629
+[00:00:04]: saving to server_temp/server_save	
 [00:00:05]: MiniMapComponent::AddAtlas( minimap/minimap_data.xml )
 [00:00:05]: Loading 18 new character(s)	
 [00:00:05]: Total 18 character(s) loaded	
@@ -173,7 +173,7 @@
 [00:00:05]: setting 	isnightmaredawn	false	
 [00:00:05]: setting 	elapseddaysinseason	0	
 [00:00:05]: setting 	isfullmoon	false	
-[00:00:05]: setting 	moisture	0.033333335071802	
+[00:00:05]: setting 	moisture	0.10833333432674	
 [00:00:05]: setting 	cavephase	day	
 [00:00:05]: setting 	iscavewaxingmoon	true	
 [00:00:05]: setting 	isnightmarewild	false	
@@ -206,50 +206,50 @@
 [00:00:05]: setting 	snowlevel	0	
 [00:00:05]: setting 	issnowcovered	false	
 [00:00:05]: setting 	autumnlength	20	
-[00:00:05]: setting 	pop	5.3689949583725e-05	
+[00:00:05]: setting 	pop	0.00017449232864671	
 [00:00:05]: setting 	nightmaretime	0	
 [00:00:05]: setting 	seasonprogress	0.5	
 [00:00:05]: setting 	moonphase	new	
 [00:00:05]: setting 	nightmarephase	none	
 [00:00:05]: setting 	cycles	0	
-[00:00:05]: setting 	timeinphase	0.000555674235026	
+[00:00:05]: setting 	timeinphase	0.0018059412638346	
 [00:00:05]: setting 	iscavenight	false	
 [00:00:05]: setting 	iscavenewmoon	false	
 [00:00:05]: setting 	issummer	false	
-[00:00:05]: setting 	temperature	30.033215972026	
-[00:00:05]: setting 	time	0.000277837117513	
+[00:00:05]: setting 	temperature	30.11294995623	
+[00:00:05]: setting 	time	0.0009029706319173	
 [00:00:06]: Reconstructing topology	
 [00:00:06]: 	...Sorting points	
 [00:00:06]: 	...Sorting edges	
 [00:00:06]: 	...Connecting nodes	
 [00:00:06]: 	...Validating connections	
-[00:00:07]: 	...Housekeeping	
-[00:00:07]: 	...Done!	
-[00:00:07]: 1 uploads added to server. From server_temp
-[00:00:07]: About to start a shard with these settings:
-[00:00:07]:   ShardName: [SHDMASTER]
-[00:00:07]:   ShardID: 1
-[00:00:07]:   ShardRole: MASTER
-[00:00:07]:   MasterHost: (null)
-[00:00:07]:   MasterBind: 127.0.0.1
-[00:00:07]:   MasterPort: 10998
-[00:00:07]: [Shard] Starting master server
-[00:00:07]: [Shard] Shard server started on port: 10998
-[00:00:07]: Telling Client our new session identifier: DFC16FD9EF361629
-[00:00:07]: Check for write access: TRUE
-[00:00:07]: Check for read access: TRUE
-[00:00:07]: Available disk space for save files: 1727761 MB
-[00:00:07]: ModIndex: Load sequence finished successfully.	
-[00:00:07]: Reset() returning
-[00:00:07]: Validating portal[7] <-> <nil>[7] (inactive)	
-[00:00:07]: Validating portal[8] <-> <nil>[8] (inactive)	
+[00:00:06]: 	...Housekeeping	
+[00:00:06]: 	...Done!	
+[00:00:06]: 1 uploads added to server. From server_temp
+[00:00:06]: About to start a shard with these settings:
+[00:00:06]:   ShardName: [SHDMASTER]
+[00:00:06]:   ShardID: 1
+[00:00:06]:   ShardRole: MASTER
+[00:00:06]:   MasterHost: (null)
+[00:00:06]:   MasterBind: 127.0.0.1
+[00:00:06]:   MasterPort: 10998
+[00:00:06]: [Shard] Starting master server
+[00:00:06]: [Shard] Shard server started on port: 10998
+[00:00:06]: Telling Client our new session identifier: DFC16FD9EF361629
+[00:00:06]: Check for write access: TRUE
+[00:00:06]: Check for read access: TRUE
+[00:00:06]: Available disk space for save files: 1722337 MB
+[00:00:06]: ModIndex: Load sequence finished successfully.	
+[00:00:06]: Reset() returning
+[00:00:07]: Validating portal[4] <-> <nil>[4] (inactive)	
 [00:00:07]: Validating portal[1] <-> <nil>[1] (inactive)	
+[00:00:07]: Validating portal[3] <-> <nil>[3] (inactive)	
+[00:00:07]: Validating portal[8] <-> <nil>[8] (inactive)	
+[00:00:07]: Validating portal[7] <-> <nil>[7] (inactive)	
 [00:00:07]: Validating portal[2] <-> <nil>[2] (inactive)	
 [00:00:07]: Validating portal[9] <-> <nil>[9] (inactive)	
-[00:00:07]: Validating portal[3] <-> <nil>[3] (inactive)	
 [00:00:07]: Validating portal[6] <-> <nil>[6] (inactive)	
 [00:00:07]: Validating portal[5] <-> <nil>[5] (inactive)	
-[00:00:07]: Validating portal[4] <-> <nil>[4] (inactive)	
 [00:00:07]: Sim paused
 [00:00:07]: Failed to send server listings
 [00:00:07]: Failure error code received: 503
@@ -260,6 +260,8 @@
 </body>
 </html>
 
+[00:00:15]: AddPortMapping(10999, 10999, 192.168.1.15) failed with code 729 (UnknownError)
+[00:00:17]: AddPortMapping(10999, 10999, 192.168.1.15) failed with code 729 (UnknownError)
 [00:00:32]: Failed to send server listings
 [00:00:32]: Failure error code received: 503
 [00:00:32]: With Body: <html>
@@ -296,91 +298,19 @@
 </body>
 </html>
 
-[00:02:12]: Failed to send server listings
-[00:02:12]: Failure error code received: 503
-[00:02:12]: With Body: <html>
-<head><title>503 Service Temporarily Unavailable</title></head>
-<body>
-<center><h1>503 Service Temporarily Unavailable</h1></center>
-</body>
-</html>
-
-[00:02:37]: Failed to send server listings
-[00:02:37]: Failure error code received: 503
-[00:02:37]: With Body: <html>
-<head><title>503 Service Temporarily Unavailable</title></head>
-<body>
-<center><h1>503 Service Temporarily Unavailable</h1></center>
-</body>
-</html>
-
-[00:03:02]: Failed to send server listings
-[00:03:02]: Failure error code received: 503
-[00:03:02]: With Body: <html>
-<head><title>503 Service Temporarily Unavailable</title></head>
-<body>
-<center><h1>503 Service Temporarily Unavailable</h1></center>
-</body>
-</html>
-
-[00:03:27]: Failed to send server listings
-[00:03:27]: Failure error code received: 503
-[00:03:27]: With Body: <html>
-<head><title>503 Service Temporarily Unavailable</title></head>
-<body>
-<center><h1>503 Service Temporarily Unavailable</h1></center>
-</body>
-</html>
-
-[00:03:52]: Failed to send server listings
-[00:03:52]: Failure error code received: 503
-[00:03:52]: With Body: <html>
-<head><title>503 Service Temporarily Unavailable</title></head>
-<body>
-<center><h1>503 Service Temporarily Unavailable</h1></center>
-</body>
-</html>
-
-[00:04:17]: Failed to send server listings
-[00:04:17]: Failure error code received: 503
-[00:04:17]: With Body: <html>
-<head><title>503 Service Temporarily Unavailable</title></head>
-<body>
-<center><h1>503 Service Temporarily Unavailable</h1></center>
-</body>
-</html>
-
-[00:04:42]: Failed to send server listings
-[00:04:42]: Failure error code received: 503
-[00:04:42]: With Body: <html>
-<head><title>503 Service Temporarily Unavailable</title></head>
-<body>
-<center><h1>503 Service Temporarily Unavailable</h1></center>
-</body>
-</html>
-
-[00:05:07]: Failed to send server listings
-[00:05:07]: Failure error code received: 503
-[00:05:07]: With Body: <html>
-<head><title>503 Service Temporarily Unavailable</title></head>
-<body>
-<center><h1>503 Service Temporarily Unavailable</h1></center>
-</body>
-</html>
-
-[00:05:09]: Available disk space for save files: 1727934 MB
-[00:05:09]: Serializing world: session/DFC16FD9EF361629/0000000004
-[00:05:09]: [Shard] Stopping shard mode
-[00:05:09]: [Steam] SendUserDisconnect for ''
-[00:05:09]: Collecting garbage...
-[00:05:09]: lua_gc took 0.20 seconds
-[00:05:09]: ~ShardLuaProxy()
-[00:05:09]: ~cEventLeaderboardProxy()
-[00:05:09]: ~ItemServerLuaProxy()
-[00:05:09]: ~InventoryLuaProxy()
-[00:05:09]: ~NetworkLuaProxy()
-[00:05:09]: ~SimLuaProxy()
-[00:05:09]: lua_close took 0.16 seconds
-[00:05:09]: CurlRequestManager::ClientThread::Main() complete
-[00:05:09]: HttpClient2 discarded 0 callbacks.
-[00:05:10]: Shutting down
+[00:01:48]: Available disk space for save files: 1722515 MB
+[00:01:48]: Serializing world: session/DFC16FD9EF361629/0000000007
+[00:01:48]: [Shard] Stopping shard mode
+[00:01:48]: [Steam] SendUserDisconnect for ''
+[00:01:48]: Collecting garbage...
+[00:01:48]: lua_gc took 0.13 seconds
+[00:01:48]: ~ShardLuaProxy()
+[00:01:48]: ~cEventLeaderboardProxy()
+[00:01:48]: ~ItemServerLuaProxy()
+[00:01:48]: ~InventoryLuaProxy()
+[00:01:48]: ~NetworkLuaProxy()
+[00:01:48]: ~SimLuaProxy()
+[00:01:49]: lua_close took 0.16 seconds
+[00:01:49]: CurlRequestManager::ClientThread::Main() complete
+[00:01:49]: HttpClient2 discarded 0 callbacks.
+[00:01:49]: Shutting down

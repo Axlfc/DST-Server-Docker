@@ -8,11 +8,16 @@ services:
       - "12346:12346/udp"
     volumes:
       - ./dst-data:/data
-      - dst-steam-master:/opt/dst_server  # <-- añade esto
+      - dst-steam-master:/opt/dst_server
     environment:
-      CLUSTER_NAME: DoNotStarveTogether
-      CLUSTER_DIR: DoNotStarveTogether
-      SHARD_NAME: Master
+      - CLUSTER_NAME=DoNotStarveTogether
+      - CLUSTER_DIR=Cluster_1
+      - SHARD_NAME=Master
+      - FORCE_UPDATE=true
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
   dst-caves:
     image: jamesits/dst-server:latest
@@ -25,11 +30,17 @@ services:
       - "12347:12347/udp"
     volumes:
       - ./dst-data:/data
-      - dst-steam-caves:/opt/dst_server  # <-- añade esto
+      - dst-steam-caves:/opt/dst_server
     environment:
-      CLUSTER_NAME: DoNotStarveTogether
-      CLUSTER_DIR: DoNotStarveTogether
-      SHARD_NAME: Caves
+      - CLUSTER_NAME=DoNotStarveTogether
+      - CLUSTER_DIR=Cluster_1
+      - SHARD_NAME=Caves
+      # IMPORTANTE: Saltamos el update para que no choque con el master
+      - SKIP_UPDATE=true
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
 volumes:
   dst-steam-master:
