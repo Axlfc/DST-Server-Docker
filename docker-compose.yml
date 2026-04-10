@@ -1,14 +1,13 @@
 services:
   dst-master:
-    image: jamesits/dst-server:latest
+    build: .
+    image: dst-server:local
     container_name: dst-master
     restart: unless-stopped
     ports:
       - "10999:10999/udp"
       - "12346:12346/udp"
-    volumes:
-      - ./dst-data:/data
-      - dst-steam-master:/opt/dst_server
+    # No persistent host or named volumes: keep container ephemeral
     environment:
       - CLUSTER_NAME=DoNotStarveTogether
       - CLUSTER_DIR=Cluster_1
@@ -20,7 +19,8 @@ services:
           memory: 2G
 
   dst-caves:
-    image: jamesits/dst-server:latest
+    build: .
+    image: dst-server:local
     container_name: dst-caves
     restart: unless-stopped
     depends_on:
@@ -28,9 +28,7 @@ services:
     ports:
       - "11000:11000/udp"
       - "12347:12347/udp"
-    volumes:
-      - ./dst-data:/data
-      - dst-steam-caves:/opt/dst_server
+    # No persistent host or named volumes: keep container ephemeral
     environment:
       - CLUSTER_NAME=DoNotStarveTogether
       - CLUSTER_DIR=Cluster_1
@@ -42,6 +40,4 @@ services:
         limits:
           memory: 2G
 
-volumes:
-  dst-steam-master:
-  dst-steam-caves:
+# No persistent volumes defined — the container will start with a clean filesystem
