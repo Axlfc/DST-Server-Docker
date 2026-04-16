@@ -42,7 +42,7 @@ fi
 if [ "$SHARD_NAME" == "Master" ]; then
     echo "Actualizando mods..."
     cd "$DST_DIR/bin64"
-    ./dontstarve_dedicated_server_nullrenderer_x64 -only_update_server_mods -persistent_storage_root /data -conf_dir DoNotStarveTogether -cluster Cluster_1
+    ./dontstarve_dedicated_server_nullrenderer_x64 -only_update_server_mods -persistent_storage_root /data -conf_dir DoNotStarveTogether -cluster Cluster_1 || echo "Aviso: La actualización de mods devolvió un código de salida no cero, continuando..."
 fi
 
 # 3. Enlaces de librerías (Necesario para 64 bits)
