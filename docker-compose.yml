@@ -6,6 +6,8 @@ services:
     ports:
       - "10999:10999/udp"
       - "10888:10888/udp" # Inter-shard communication
+      - "27016:27016/udp" # Steam master server port
+      - "8766:8766/udp"   # Steam authentication port
     env_file: .env
     environment:
       - SHARD_NAME=Master
@@ -23,6 +25,8 @@ services:
       - dst-master
     ports:
       - "11000:11000/udp"
+      - "27017:27017/udp" # Steam master server port
+      - "8767:8767/udp"   # Steam authentication port
     env_file: .env
     environment:
       - SHARD_NAME=Caves
