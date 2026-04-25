@@ -119,6 +119,23 @@ else
     echo "AVISO: No se encontró modoverrides.lua. Los mods no estarán activos aunque se hayan descargado."
 fi
 
+# 2c. Crear symlinks de mods ugc → mods/workshop-*
+UGC_CONTENT="$DST_DIR/ugc_mods/Cluster_1/$SHARD_NAME/content/322330"
+if [ -d "$UGC_CONTENT" ]; then
+    echo "Creando symlinks de mods ugc en $SHARD_NAME..."
+    mkdir -p "$DST_DIR/mods"
+    for mod_dir in "$UGC_CONTENT"/*/; do
+        if [ -d "$mod_dir" ]; then
+            mod_id=$(basename "$mod_dir")
+            link="$DST_DIR/mods/workshop-$mod_id"
+            if [ ! -e "$link" ]; then
+                ln -sf "$mod_dir" "$link"
+                echo "  symlink: workshop-$mod_id → $mod_dir"
+            fi
+        fi
+    done
+fi
+
 # 3. Enlaces de librerías (Necesario para 64 bits)
 mkdir -p /home/steam/.steam/sdk64
 ln -sf /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
