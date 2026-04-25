@@ -72,6 +72,13 @@ fi
 
 # 2. Actualización de Mods (Solo en el Master para evitar conflictos)
 if [ "$SHARD_NAME" == "Master" ]; then
+    # === FIX: Crear carpetas de Steam para Workshop ===
+    STEAM_LIBS="/home/steam/.steam/steam/steamapps"
+    echo "Preparando directorios de Steam para Workshop..."
+    mkdir -p "$STEAM_LIBS/common" "$STEAM_LIBS/workshop/temp" "$STEAM_LIBS/workshop/content/322330"
+    chmod -R 755 "$STEAM_LIBS"
+    # === FIN FIX ===
+
     echo "Actualizando mods..."
     cd "$DST_DIR/bin64"
     ./dontstarve_dedicated_server_nullrenderer_x64 -only_update_server_mods -persistent_storage_root /data -conf_dir DoNotStarveTogether -cluster Cluster_1 || echo "Aviso: La actualización de mods devolvió un código de salida no cero, continuando..."
