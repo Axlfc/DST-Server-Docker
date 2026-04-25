@@ -78,11 +78,31 @@ if [ "$SHARD_NAME" == "Master" ]; then
         echo "Restaurando dedicated_server_mods_setup.lua..."
         cp /tmp/dedicated_server_mods_setup.lua "$DST_DIR/mods/dedicated_server_mods_setup.lua"
     fi
-    # === FIX: Crear carpetas de Steam para Workshop ===
-    STEAM_LIBS="/home/steam/.steam/steam/steamapps"
-    echo "Preparando directorios de Steam para Workshop..."
-    mkdir -p "$STEAM_LIBS/common" "$STEAM_LIBS/workshop/temp" "$STEAM_LIBS/workshop/content/322330"
-    chmod -R 755 "$STEAM_LIBS"
+    # === FIX: Crear carpetas de Steam para Workshop (Local a los binarios) ===
+    echo "Preparando directorios de Steam para Workshop en $DST_DIR/bin64..."
+    mkdir -p "$DST_DIR/bin64/steamapps/workshop/content/322330"
+    mkdir -p "$DST_DIR/bin64/steamapps/workshop/staging"
+    mkdir -p "$DST_DIR/bin64/config"
+
+    cat > "$DST_DIR/bin64/steamapps/libraryfolders.vdf" << 'EOF'
+"libraryfolders"
+{
+    "contentstatsid"    "-1"
+    "1"
+    {
+        "path"    "/opt/dst_server"
+        "label"    ""
+        "totalsize"    "0"
+        "update_clean_bytes_tally"    "0"
+        "time_last_update_corruption"    "0"
+        "apps"
+        {
+            "322330"    "0"
+        }
+    }
+}
+EOF
+    chmod -R 755 "$DST_DIR/bin64/steamapps" "$DST_DIR/bin64/config"
     # === FIN FIX ===
 
     echo "Actualizando mods..."
