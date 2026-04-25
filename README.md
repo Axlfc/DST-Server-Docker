@@ -35,7 +35,7 @@ Para que el servidor mantenga el mismo progreso en ambos sistemas, lo ideal es t
 2. Crea un archivo `.env` en la raíz del proyecto basado en `.env.example`:
    ```bash
    CLUSTER_TOKEN=pds-tu-token-aqui
-   CLUSTER_PASSWORD=LaChicaDeLaBoina
+   CLUSTER_PASSWORD=tu_password_aqui
    ```
 
 ### 2. Cómo Levantar el Servidor
@@ -65,7 +65,7 @@ docker-compose restart
 
 - **Mods:** Añade los IDs de los mods en `dedicated_server_mods_setup.lua`.
 - **Ajustes del Mundo:** Edita los archivos en `dst-data/DoNotStarveTogether/Cluster_1/`:
-  - `cluster.ini`: Nombre del server, contraseña (`LaChicaDeLaBoina`), número de jugadores.
+  - `cluster.ini`: Nombre del server, contraseña (`CLUSTER_PASSWORD` en el `.env`), número de jugadores.
   - `Master/worldgenoverride.lua`: Configuración del mapa de la superficie.
   - `Caves/worldgenoverride.lua`: Configuración del mapa de las cuevas.
 
