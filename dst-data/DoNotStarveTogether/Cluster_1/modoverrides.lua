@@ -28,5 +28,27 @@ return {
     },
     ["workshop-817025783"] = {
         enabled = true
+    },
+    -- Nuevos mods añadidos:
+    ["workshop-347079953"] = {
+        enabled = true
+    },
+    ["workshop-375850593"] = {
+        enabled = true
+    },
+    ["workshop-458940297"] = {
+        enabled = true
+    },
+    ["workshop-375859599"] = {
+        enabled = true
+    },
+    ["workshop-944738665"] = {
+        enabled = true
+    },
+    ["workshop-362175979"] = {
+        enabled = true
+    },
+    ["workshop-1271089343"] = {
+        enabled = true
     }
 }
