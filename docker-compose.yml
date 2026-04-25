@@ -16,6 +16,10 @@ services:
       - ./dst-data:/data
       - ./dedicated_server_mods_setup.lua:/opt/dst_server/mods/dedicated_server_mods_setup.lua
       - dst-bin:/opt/dst_server
+    deploy:
+      resources:
+        limits:
+          memory: 4G
 
   dst-caves:
     build: .
@@ -35,6 +39,10 @@ services:
       - ./dst-data:/data
       - ./dedicated_server_mods_setup.lua:/opt/dst_server/mods/dedicated_server_mods_setup.lua
       - dst-bin:/opt/dst_server
+    deploy:
+      resources:
+        limits:
+          memory: 4G
 
 volumes:
   dst-bin:
