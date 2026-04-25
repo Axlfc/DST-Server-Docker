@@ -13,9 +13,10 @@ services:
       - SHARD_NAME=Master
       - SKIP_UPDATE=false
     volumes:
+      - dst-bin:/opt/dst_server
       - ./dst-data:/data
       - ./dedicated_server_mods_setup.lua:/opt/dst_server/mods/dedicated_server_mods_setup.lua
-      - dst-bin:/opt/dst_server
+      - steam-workshop:/home/steam/.steam/steam/steamapps
     deploy:
       resources:
         limits:
@@ -36,9 +37,10 @@ services:
       - SHARD_NAME=Caves
       - SKIP_UPDATE=true
     volumes:
+      - dst-bin:/opt/dst_server
       - ./dst-data:/data
       - ./dedicated_server_mods_setup.lua:/opt/dst_server/mods/dedicated_server_mods_setup.lua
-      - dst-bin:/opt/dst_server
+      - steam-workshop:/home/steam/.steam/steam/steamapps
     deploy:
       resources:
         limits:
@@ -46,3 +48,4 @@ services:
 
 volumes:
   dst-bin:
+  steam-workshop:
