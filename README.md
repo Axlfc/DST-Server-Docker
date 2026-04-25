@@ -34,7 +34,7 @@ Para que el servidor mantenga el mismo progreso en ambos sistemas, lo ideal es t
 1. Clona este repositorio en tu disco compartido.
 2. Crea un archivo `.env` en la raíz del proyecto basado en `.env.example`:
    ```bash
-   CLUSTER_TOKEN=pds-tu-token-aqui
+   CLUSTER_TOKEN=TU_TOKEN_DE_KLEI_AQUI
    CLUSTER_PASSWORD=tu_password_aqui
    ```
 
