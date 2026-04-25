@@ -5,19 +5,7 @@ return {
     ["workshop-1207269058"] = {
         enabled = true
     },
-    ["workshop-856487758"] = {
-        enabled = true
-    },
-    ["workshop-501385076"] = {
-        enabled = true
-    },
-    ["workshop-585654889"] = {
-        enabled = true
-    },
     ["workshop-1416161108"] = {
-        enabled = true
-    },
-    ["workshop-382177939"] = {
         enabled = true
     },
     ["workshop-374550642"] = {
@@ -25,9 +13,6 @@ return {
         configuration_options = {
             MAX_STACK_SIZE = 99
         }
-    },
-    ["workshop-1818688368"] = {
-        enabled = true
     },
     ["workshop-1839858501"] = {
         enabled = true
