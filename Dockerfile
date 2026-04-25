@@ -34,6 +34,16 @@ RUN set -eux; \
 RUN mkdir -p ${DST_DIR}/mods ${DATA_DIR} \
     && chown -R steam:steam ${DST_DIR} ${DATA_DIR}
 
+# Pre-crear la estructura del volumen steam-workshop con permisos correctos
+# Esto es necesario porque Docker inicializa volúmenes vacíos como root.
+# Al crear las carpetas aquí (como root todavía), Docker las respeta al montar.
+RUN mkdir -p /home/steam/.steam/steam/steamapps/workshop/content/322330 \
+             /home/steam/.steam/steam/steamapps/workshop/staging \
+             /home/steam/.steam/steam/steamapps/common \
+             /home/steam/.steam/sdk64 \
+    && chown -R steam:steam /home/steam/.steam \
+    && chmod -R 755 /home/steam/.steam
+
 COPY --chown=steam:steam docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
