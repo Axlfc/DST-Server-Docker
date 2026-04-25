@@ -8,16 +8,11 @@ SKIP_UPDATE=${SKIP_UPDATE:-false}
 
 echo "--- INICIANDO SHARD: $SHARD_NAME ---"
 
-# -1. Verificaciones de Mods
-MODS_SETUP="$DST_DIR/mods/dedicated_server_mods_setup.lua"
-if [ -d "$MODS_SETUP" ]; then
-    echo "ERROR: $MODS_SETUP es un directorio. Docker probablemente lo creó porque el archivo no existía en el host."
-    echo "Asegúrate de que ./dedicated_server_mods_setup.lua existe en el host."
-    exit 1
-elif [ ! -f "$MODS_SETUP" ]; then
-    echo "AVISO: No se encontró dedicated_server_mods_setup.lua en $MODS_SETUP. No se descargarán mods automáticamente."
-else
+# -1. Verificación del archivo de mods (comprobamos /tmp, que es el mount real)
+if [ -f "/tmp/dedicated_server_mods_setup.lua" ]; then
     echo "✓ dedicated_server_mods_setup.lua detectado."
+else
+    echo "AVISO: No se encontró dedicated_server_mods_setup.lua en /tmp. No se descargarán mods automáticamente."
 fi
 
 # 0. Gestión de Configuración (Token y Password)
@@ -54,7 +49,13 @@ quit
 EOF
 
     echo "Ejecutando actualización (esto puede tardar)..."
-    /home/steam/steamcmd/steamcmd.sh +runscript /tmp/dst_update.txt
+    # SteamCMD falla con 'Missing configuration' o estado 0x202/0x626 en volúmenes vacíos.
+    # Reintentamos hasta 3 veces, workaround conocido para este bug de Steam.
+    for attempt in 1 2 3; do
+        /home/steam/steamcmd/steamcmd.sh +runscript /tmp/dst_update.txt && break
+        echo "SteamCMD falló (intento $attempt/3), reintentando..."
+        sleep 5
+    done
 else
     echo "Esperando a que el Master descargue/verifique los binarios..."
     # Aumentamos el tiempo de espera por si la descarga es lenta
@@ -72,6 +73,11 @@ fi
 
 # 2. Actualización de Mods (Solo en el Master para evitar conflictos)
 if [ "$SHARD_NAME" == "Master" ]; then
+    # === Restaurar dedicated_server_mods_setup.lua (SteamCMD lo sobreescribe) ===
+    if [ -f "/tmp/dedicated_server_mods_setup.lua" ]; then
+        echo "Restaurando dedicated_server_mods_setup.lua..."
+        cp /tmp/dedicated_server_mods_setup.lua "$DST_DIR/mods/dedicated_server_mods_setup.lua"
+    fi
     # === FIX: Crear carpetas de Steam para Workshop ===
     STEAM_LIBS="/home/steam/.steam/steam/steamapps"
     echo "Preparando directorios de Steam para Workshop..."
