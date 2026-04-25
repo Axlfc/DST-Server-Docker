@@ -63,11 +63,33 @@ docker-compose restart
 
 ## ⚙️ Personalización
 
-- **Mods:** Añade los IDs de los mods en `dedicated_server_mods_setup.lua`.
 - **Ajustes del Mundo:** Edita los archivos en `dst-data/DoNotStarveTogether/Cluster_1/`:
   - `cluster.ini`: Nombre del server, contraseña (`CLUSTER_PASSWORD` en el `.env`), número de jugadores.
   - `Master/worldgenoverride.lua`: Configuración del mapa de la superficie.
   - `Caves/worldgenoverride.lua`: Configuración del mapa de las cuevas.
+
+### 🔌 Gestión de Mods
+Para añadir o quitar mods, debes seguir dos pasos:
+
+1.  **Descarga (Setup):** Edita el archivo `dedicated_server_mods_setup.lua` en la raíz y añade una línea por cada mod:
+    ```lua
+    ServerModSetup("ID_DEL_MOD")
+    ```
+2.  **Activación y Configuración:** Edita `dst-data/DoNotStarveTogether/Cluster_1/modoverrides.lua` para activar el mod y configurar sus opciones:
+    ```lua
+    ["workshop-ID_DEL_MOD"] = {
+        enabled = true,
+        configuration_options = { ... }
+    }
+    ```
+    *Nota: Si quitas un mod, asegúrate de eliminarlo de ambos archivos.*
+
+### 🧠 Ajustar RAM (Memoria)
+Si notas que el servidor necesita más (o menos) memoria, puedes ajustarlo en el archivo `docker-compose.yml`:
+
+1.  Busca la sección `deploy: resources: limits: memory` para `dst-master` y `dst-caves`.
+2.  Cambia el valor (ej. `4G` a `2G` o `8G` según tu necesidad).
+3.  Reinicia el servidor para aplicar los cambios: `docker-compose up -d`.
 
 ## 📝 Notas Técnicas
 - **Idempotencia:** El servidor usa volúmenes de Docker (`dst-bin` y `./dst-data`). Si borras los contenedores, el progreso y los binarios persisten.
