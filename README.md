@@ -21,8 +21,10 @@ Este repositorio contiene una configuración optimizada y lista para usar de un 
    - `10999 UDP` (Master)
    - `11000 UDP` (Caves)
    - `10888 UDP` (Comunicación interna)
-   - `27016-27017 UDP` (Steam)
-   - `8766-8767 UDP` (Steam Auth)
+   - `27016 UDP` (Steam 1)
+   - `27017 UDP` (Steam 2)
+   - `8766 UDP` (Steam Auth 1)
+   - `8767 UDP` (Steam Auth 2)
 
 ---
 
