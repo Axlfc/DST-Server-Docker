@@ -8,10 +8,11 @@ SKIP_UPDATE=${SKIP_UPDATE:-false}
 
 echo "--- INICIANDO SHARD: $SHARD_NAME ---"
 
-# 0. Gestión del Token
+# 0. Gestión de Configuración (Token y Password)
 CLUSTER_PATH="$DATA_DIR/DoNotStarveTogether/Cluster_1"
 mkdir -p "$CLUSTER_PATH"
 
+# Token
 if [ -f "$CLUSTER_PATH/cluster_token.txt" ]; then
     echo "Token detectado en cluster_token.txt."
 elif [ ! -z "${CLUSTER_TOKEN:-}" ]; then
@@ -19,6 +20,13 @@ elif [ ! -z "${CLUSTER_TOKEN:-}" ]; then
     echo "$CLUSTER_TOKEN" > "$CLUSTER_PATH/cluster_token.txt"
 else
     echo "AVISO: No se encontró CLUSTER_TOKEN. El servidor no será visible externamente."
+fi
+
+# Password (Inyectar en cluster.ini si existe la variable CLUSTER_PASSWORD)
+if [ ! -z "${CLUSTER_PASSWORD:-}" ] && [ -f "$CLUSTER_PATH/cluster.ini" ]; then
+    echo "Inyectando CLUSTER_PASSWORD en cluster.ini..."
+    # Usamos sed para reemplazar o añadir la password en la sección [NETWORK]
+    sed -i "s/^cluster_password =.*/cluster_password = $CLUSTER_PASSWORD/" "$CLUSTER_PATH/cluster.ini"
 fi
 
 # 1. Instalación / Actualización de Binarios

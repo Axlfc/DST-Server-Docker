@@ -35,6 +35,7 @@ Para que el servidor mantenga el mismo progreso en ambos sistemas, lo ideal es t
 2. Crea un archivo `.env` en la raíz del proyecto basado en `.env.example`:
    ```bash
    CLUSTER_TOKEN=pds-tu-token-aqui
+   CLUSTER_PASSWORD=LaChicaDeLaBoina
    ```
 
 ### 2. Cómo Levantar el Servidor
