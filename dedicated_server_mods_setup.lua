@@ -1,13 +1,8 @@
 -- Mods descargados automáticamente
 ServerModSetup("666155465")
 ServerModSetup("1207269058")
-ServerModSetup("856487758")
-ServerModSetup("501385076")
-ServerModSetup("585654889")
 ServerModSetup("1416161108")
-ServerModSetup("382177939")
 ServerModSetup("374550642")
-ServerModSetup("1818688368")
 ServerModSetup("1839858501")
 ServerModSetup("2353205177")
 ServerModSetup("378160973")
