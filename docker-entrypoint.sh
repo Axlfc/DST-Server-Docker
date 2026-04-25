@@ -8,8 +8,9 @@ SKIP_UPDATE=${SKIP_UPDATE:-false}
 
 echo "--- INICIANDO SHARD: $SHARD_NAME ---"
 
-# -1. Verificación del archivo de mods (comprobamos /tmp, que es el mount real)
-if [ -f "/tmp/dedicated_server_mods_setup.lua" ]; then
+# -1. Verificación del archivo de mods
+MODS_SETUP_SRC="/tmp/dedicated_server_mods_setup.lua"
+if [ -f "$MODS_SETUP_SRC" ]; then
     echo "✓ dedicated_server_mods_setup.lua detectado."
 else
     echo "AVISO: No se encontró dedicated_server_mods_setup.lua en /tmp. No se descargarán mods automáticamente."
@@ -29,17 +30,16 @@ else
     echo "AVISO: No se encontró CLUSTER_TOKEN. El servidor no será visible externamente."
 fi
 
-# Password (Inyectar en cluster.ini si existe la variable CLUSTER_PASSWORD)
+# Password
 if [ ! -z "${CLUSTER_PASSWORD:-}" ] && [ -f "$CLUSTER_PATH/cluster.ini" ]; then
     echo "Inyectando CLUSTER_PASSWORD en cluster.ini..."
-    # Usamos sed para reemplazar o añadir la password en la sección [NETWORK]
     sed -i "s/^cluster_password =.*/cluster_password = $CLUSTER_PASSWORD/" "$CLUSTER_PATH/cluster.ini"
 fi
 
 # 1. Instalación / Actualización de Binarios
 if [ "$SKIP_UPDATE" == "false" ]; then
     echo "Preparando script de actualización para SteamCMD..."
-    
+
     cat << EOF > /tmp/dst_update.txt
 @sSteamCmdForcePlatformType linux
 force_install_dir $DST_DIR
@@ -49,8 +49,6 @@ quit
 EOF
 
     echo "Ejecutando actualización (esto puede tardar)..."
-    # SteamCMD falla con 'Missing configuration' o estado 0x202/0x626 en volúmenes vacíos.
-    # Reintentamos hasta 3 veces, workaround conocido para este bug de Steam.
     for attempt in 1 2 3; do
         /home/steam/steamcmd/steamcmd.sh +runscript /tmp/dst_update.txt && break
         echo "SteamCMD falló (intento $attempt/3), reintentando..."
@@ -58,7 +56,6 @@ EOF
     done
 else
     echo "Esperando a que el Master descargue/verifique los binarios..."
-    # Aumentamos el tiempo de espera por si la descarga es lenta
     TIMEOUT=60
     while [ ! -f "$DST_DIR/bin64/dontstarve_dedicated_server_nullrenderer_x64" ]; do
         if [ $TIMEOUT -le 0 ]; then
@@ -71,46 +68,63 @@ else
     echo "¡Binarios detectados!"
 fi
 
-# 2. Actualización de Mods (Solo en el Master para evitar conflictos)
+# 2. Descarga de mods via SteamCMD (Solo en el Master)
 if [ "$SHARD_NAME" == "Master" ]; then
-    # === Restaurar dedicated_server_mods_setup.lua (SteamCMD lo sobreescribe) ===
-    if [ -f "/tmp/dedicated_server_mods_setup.lua" ]; then
+    # Restaurar dedicated_server_mods_setup.lua (app_update validate lo borra)
+    if [ -f "$MODS_SETUP_SRC" ]; then
         echo "Restaurando dedicated_server_mods_setup.lua..."
-        cp /tmp/dedicated_server_mods_setup.lua "$DST_DIR/mods/dedicated_server_mods_setup.lua"
+        cp "$MODS_SETUP_SRC" "$DST_DIR/mods/dedicated_server_mods_setup.lua"
     fi
-    # === FIX: Crear carpetas de Steam para Workshop (Local a los binarios) ===
-    echo "Preparando directorios de Steam para Workshop en $DST_DIR/bin64..."
-    mkdir -p "$DST_DIR/bin64/steamapps/workshop/content/322330"
-    mkdir -p "$DST_DIR/bin64/steamapps/workshop/staging"
-    mkdir -p "$DST_DIR/bin64/config"
 
-    cat > "$DST_DIR/bin64/steamapps/libraryfolders.vdf" << 'EOF'
-"libraryfolders"
-{
-    "contentstatsid"    "-1"
-    "1"
-    {
-        "path"    "/opt/dst_server"
-        "label"    ""
-        "totalsize"    "0"
-        "update_clean_bytes_tally"    "0"
-        "time_last_update_corruption"    "0"
-        "apps"
-        {
-            "322330"    "0"
-        }
-    }
-}
-EOF
-    chmod -R 755 "$DST_DIR/bin64/steamapps" "$DST_DIR/bin64/config"
-    # === FIN FIX ===
+    # Extraer IDs de mods del archivo de setup
+    MODS_FILE="$DST_DIR/mods/dedicated_server_mods_setup.lua"
+    if [ -f "$MODS_FILE" ]; then
+        MOD_IDS=$(grep -oP '(?<=ServerModSetup\(")[0-9]+(?="\))' "$MODS_FILE" || true)
+
+        if [ ! -z "$MOD_IDS" ]; then
+            echo "Descargando mods via SteamCMD..."
+
+            {
+                echo "@sSteamCmdForcePlatformType linux"
+                echo "login anonymous"
+                for MOD_ID in $MOD_IDS; do
+                    echo "workshop_download_item 322330 $MOD_ID"
+                done
+                echo "quit"
+            } > /tmp/dst_mods.txt
+
+            /home/steam/steamcmd/steamcmd.sh +runscript /tmp/dst_mods.txt || echo "AVISO: Algún mod pudo no descargarse correctamente."
+
+            # Copiar mods descargados a la carpeta de mods del servidor
+            WORKSHOP_DIR="/home/steam/.steam/steam/steamapps/workshop/content/322330"
+            echo "Copiando mods a $DST_DIR/mods/..."
+            for MOD_ID in $MOD_IDS; do
+                MOD_SRC="$WORKSHOP_DIR/$MOD_ID"
+                MOD_DST="$DST_DIR/mods/workshop-$MOD_ID"
+                if [ -d "$MOD_SRC" ]; then
+                    echo "  ✓ Copiando mod $MOD_ID..."
+                    rm -rf "$MOD_DST"
+                    cp -r "$MOD_SRC" "$MOD_DST"
+                else
+                    echo "  ✗ AVISO: No se encontró el mod $MOD_ID en $MOD_SRC"
+                fi
+            done
+        else
+            echo "AVISO: No se encontraron IDs de mods en $MODS_FILE."
+        fi
+    fi
 fi
 
-# 2b. Verificación de modoverrides.lua
+# 2b. Propagar modoverrides.lua al directorio del shard
+# DST busca modoverrides.lua dentro de cada shard (Master/ o Caves/), no en la raíz del cluster
+SHARD_PATH="$CLUSTER_PATH/$SHARD_NAME"
+mkdir -p "$SHARD_PATH"
 if [ -f "$CLUSTER_PATH/modoverrides.lua" ]; then
-    echo "✓ modoverrides.lua detectado en $CLUSTER_PATH."
-elif [ -f "$CLUSTER_PATH/$SHARD_NAME/modoverrides.lua" ]; then
-    echo "✓ modoverrides.lua detectado en $CLUSTER_PATH/$SHARD_NAME."
+    echo "Propagando modoverrides.lua a $SHARD_PATH/..."
+    cp "$CLUSTER_PATH/modoverrides.lua" "$SHARD_PATH/modoverrides.lua"
+    echo "✓ modoverrides.lua copiado a $SHARD_PATH."
+elif [ -f "$SHARD_PATH/modoverrides.lua" ]; then
+    echo "✓ modoverrides.lua ya existe en $SHARD_PATH."
 else
     echo "AVISO: No se encontró modoverrides.lua. Los mods no estarán activos aunque se hayan descargado."
 fi
@@ -129,4 +143,5 @@ exec ./dontstarve_dedicated_server_nullrenderer_x64 \
     -persistent_storage_root /data \
     -conf_dir DoNotStarveTogether \
     -cluster Cluster_1 \
-    -shard "$SHARD_NAME"
+    -shard "$SHARD_NAME" \
+    -skip_update_server_mods
