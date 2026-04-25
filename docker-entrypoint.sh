@@ -6,6 +6,25 @@ DATA_DIR="/data"
 SHARD_NAME=${SHARD_NAME:-Master}
 SKIP_UPDATE=${SKIP_UPDATE:-false}
 
+# Función para crear symlinks de mods ugc → mods/workshop-*
+create_mod_symlinks() {
+    UGC_CONTENT="$DST_DIR/ugc_mods/Cluster_1/$SHARD_NAME/content/322330"
+    if [ -d "$UGC_CONTENT" ]; then
+        echo "Creando symlinks de mods ugc en $SHARD_NAME..."
+        mkdir -p "$DST_DIR/mods"
+        for mod_dir in "$UGC_CONTENT"/*/; do
+            if [ -d "$mod_dir" ]; then
+                mod_id=$(basename "$mod_dir")
+                link="$DST_DIR/mods/workshop-$mod_id"
+                if [ ! -e "$link" ]; then
+                    ln -sf "$mod_dir" "$link"
+                    echo "  symlink: workshop-$mod_id → $mod_dir"
+                fi
+            fi
+        done
+    fi
+}
+
 echo "--- INICIANDO SHARD: $SHARD_NAME ---"
 
 # -1. Verificación del archivo de mods (comprobamos /tmp, que es el mount real)
@@ -105,6 +124,9 @@ EOF
     chmod -R 755 "$DST_DIR/bin64/steamapps" "$DST_DIR/bin64/config"
     # === FIN FIX ===
 
+    # Asegurar que mods existentes estén symlinkeados antes de actualizar
+    create_mod_symlinks
+
     echo "Actualizando mods..."
     cd "$DST_DIR/bin64"
     ./dontstarve_dedicated_server_nullrenderer_x64 -only_update_server_mods -persistent_storage_root /data -conf_dir DoNotStarveTogether -cluster Cluster_1 || echo "Aviso: La actualización de mods devolvió un código de salida no cero, continuando..."
@@ -120,21 +142,7 @@ else
 fi
 
 # 2c. Crear symlinks de mods ugc → mods/workshop-*
-UGC_CONTENT="$DST_DIR/ugc_mods/Cluster_1/$SHARD_NAME/content/322330"
-if [ -d "$UGC_CONTENT" ]; then
-    echo "Creando symlinks de mods ugc en $SHARD_NAME..."
-    mkdir -p "$DST_DIR/mods"
-    for mod_dir in "$UGC_CONTENT"/*/; do
-        if [ -d "$mod_dir" ]; then
-            mod_id=$(basename "$mod_dir")
-            link="$DST_DIR/mods/workshop-$mod_id"
-            if [ ! -e "$link" ]; then
-                ln -sf "$mod_dir" "$link"
-                echo "  symlink: workshop-$mod_id → $mod_dir"
-            fi
-        fi
-    done
-fi
+create_mod_symlinks
 
 # 3. Enlaces de librerías (Necesario para 64 bits)
 mkdir -p /home/steam/.steam/sdk64
