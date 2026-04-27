@@ -37,6 +37,7 @@ Para que el servidor mantenga el mismo progreso en ambos sistemas, lo ideal es t
 2. Crea un archivo `.env` en la raíz del proyecto basado en `.env.example`:
    ```bash
    CLUSTER_TOKEN=TU_TOKEN_DE_KLEI_AQUI
+   CLUSTER_NAME=Mi Servidor DST
    CLUSTER_PASSWORD=tu_password_aqui
    ```
 
@@ -65,10 +66,33 @@ docker-compose restart
 
 ## ⚙️ Personalización
 
-- **Ajustes del Mundo:** Edita los archivos en `dst-data/DoNotStarveTogether/Cluster_1/`:
-  - `cluster.ini`: Nombre del server, contraseña (`CLUSTER_PASSWORD` en el `.env`), número de jugadores.
-  - `Master/worldgenoverride.lua`: Configuración del mapa de la superficie.
-  - `Caves/worldgenoverride.lua`: Configuración del mapa de las cuevas.
+### 🏷️ Cambiar Nombre y Contraseña
+Puedes cambiar el nombre y la contraseña del servidor de dos formas:
+
+#### A. Usando el archivo `.env` (Recomendado)
+Es la forma más sencilla. Solo tienes que editar el archivo `.env` en la raíz del proyecto:
+```bash
+CLUSTER_NAME=El nuevo nombre de mi servidor
+CLUSTER_PASSWORD=una_contraseña_segura
+```
+Al reiniciar el servidor, estos valores se aplicarán automáticamente.
+
+#### B. Edición Manual
+Si prefieres editar los archivos directamente, puedes hacerlo en:
+`dst-data/DoNotStarveTogether/Cluster_1/cluster.ini`
+
+Busca estas líneas bajo la sección `[NETWORK]`:
+```ini
+cluster_name = La chica de la Boina
+cluster_password = LaChicaDeLaBoina
+```
+*Nota: Si has configurado variables en el `.env`, estas sobrescribirán lo que pongas manualmente en el `cluster.ini` cada vez que el servidor arranque.*
+
+### 🗺️ Ajustes del Mundo
+Edita los archivos en `dst-data/DoNotStarveTogether/Cluster_1/`:
+- `cluster.ini`: Otros ajustes como número de jugadores (`max_players`) o modo de juego (`game_mode`).
+- `Master/worldgenoverride.lua`: Configuración del mapa de la superficie.
+- `Caves/worldgenoverride.lua`: Configuración del mapa de las cuevas.
 
 ### 🔌 Gestión de Mods
 Para añadir o quitar mods, debes seguir dos pasos:

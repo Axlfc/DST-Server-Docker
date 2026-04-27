@@ -30,10 +30,17 @@ else
     echo "AVISO: No se encontró CLUSTER_TOKEN. El servidor no será visible externamente."
 fi
 
-# Password
-if [ ! -z "${CLUSTER_PASSWORD:-}" ] && [ -f "$CLUSTER_PATH/cluster.ini" ]; then
-    echo "Inyectando CLUSTER_PASSWORD en cluster.ini..."
-    sed -i "s/^cluster_password =.*/cluster_password = $CLUSTER_PASSWORD/" "$CLUSTER_PATH/cluster.ini"
+# Name & Password
+if [ -f "$CLUSTER_PATH/cluster.ini" ]; then
+    if [ ! -z "${CLUSTER_NAME:-}" ]; then
+        echo "Inyectando CLUSTER_NAME en cluster.ini..."
+        sed -i "s/^cluster_name =.*/cluster_name = $CLUSTER_NAME/" "$CLUSTER_PATH/cluster.ini"
+    fi
+
+    if [ ! -z "${CLUSTER_PASSWORD:-}" ]; then
+        echo "Inyectando CLUSTER_PASSWORD en cluster.ini..."
+        sed -i "s/^cluster_password =.*/cluster_password = $CLUSTER_PASSWORD/" "$CLUSTER_PATH/cluster.ini"
+    fi
 fi
 
 # 1. Instalación / Actualización de Binarios
