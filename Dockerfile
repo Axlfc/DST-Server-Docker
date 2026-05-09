@@ -3,8 +3,6 @@ FROM cm2network/steamcmd:root
 ENV DST_DIR=/opt/dst_server
 ENV DATA_DIR=/data
 
-# Instalación de dependencias necesarias para DST (x64 y x86)
-# Klei recomienda varias librerías de 32 bits incluso para la versión de 64 bits
 RUN set -eux; \
     dpkg --add-architecture i386; \
     apt-get update; \
@@ -15,10 +13,10 @@ RUN set -eux; \
         wget \
         tar \
         ca-certificates \
+        netcat-openbsd \
         libstdc++6 \
         libgcc-s1 \
         libsqlite3-0 \
-        # Librerías i386 (32 bits)
         libcurl4-gnutls-dev:i386 \
         libtinfo6:i386 \
         libcurl4:i386 \
@@ -30,13 +28,9 @@ RUN set -eux; \
         libsqlite3-0:i386; \
     rm -rf /var/lib/apt/lists/*
 
-# Crear directorios y ajustar permisos
 RUN mkdir -p ${DST_DIR}/mods ${DATA_DIR} \
     && chown -R steam:steam ${DST_DIR} ${DATA_DIR}
 
-# Pre-crear la estructura del volumen steam-workshop con permisos correctos
-# Esto es necesario porque Docker inicializa volúmenes vacíos como root.
-# Al crear las carpetas aquí (como root todavía), Docker las respeta al montar.
 RUN mkdir -p /home/steam/.steam/steam/steamapps/workshop/content/322330 \
              /home/steam/.steam/steam/steamapps/workshop/staging \
              /home/steam/.steam/steam/steamapps/common \
@@ -49,6 +43,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 USER steam
 WORKDIR /home/steam
+
 
 # Exponer puertos por defecto (documentación)
 # Master: 10999/udp, 10888/udp (shard), 27016/udp (steam), 8766/udp (auth)

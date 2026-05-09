@@ -5,9 +5,9 @@ services:
     restart: unless-stopped
     ports:
       - "10999:10999/udp"
-      - "10888:10888/udp" # Inter-shard communication
-      - "27016:27016/udp" # Steam master server port
-      - "8766:8766/udp"   # Steam authentication port
+      - "10888:10888/udp"
+      - "27016:27016/udp"
+      - "8766:8766/udp"
     env_file: .env
     environment:
       - SHARD_NAME=Master
@@ -17,6 +17,12 @@ services:
       - ./dst-data:/data
       - ./dedicated_server_mods_setup.lua:/tmp/dedicated_server_mods_setup.lua
       - steam-workshop:/home/steam/.steam/steam/steamapps
+    healthcheck:
+      test: ["CMD", "nc", "-zu", "localhost", "10888"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
     deploy:
       resources:
         limits:
@@ -27,11 +33,12 @@ services:
     container_name: dst-caves
     restart: unless-stopped
     depends_on:
-      - dst-master
+      dst-master:
+        condition: service_healthy   # ← espera al healthcheck
     ports:
       - "11000:11000/udp"
-      - "27017:27017/udp" # Steam master server port
-      - "8767:8767/udp"   # Steam authentication port
+      - "27017:27017/udp"
+      - "8767:8767/udp"
     env_file: .env
     environment:
       - SHARD_NAME=Caves

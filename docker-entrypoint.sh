@@ -73,6 +73,19 @@ else
         TIMEOUT=$((TIMEOUT-1))
     done
     echo "¡Binarios detectados!"
+
+    echo "Esperando a que el shard Master esté listo en dst-master:10888..."
+    TIMEOUT=60
+    until nc -zu dst-master 10888 2>/dev/null; do
+        if [ $TIMEOUT -le 0 ]; then
+            echo "ERROR: Master no respondió en el puerto 10888. Abortando."
+            exit 1
+        fi
+        echo "  ...Master no listo aún, esperando 5s (intentos restantes: $TIMEOUT)"
+        sleep 5
+        TIMEOUT=$((TIMEOUT-1))
+    done
+    echo "¡Master listo!"
 fi
 
 # 2. Descarga de mods via SteamCMD (Solo en el Master)
