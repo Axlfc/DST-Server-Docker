@@ -5,9 +5,10 @@ services:
     restart: unless-stopped
     ports:
       - "10999:10999/udp"
-      - "10888:10888/udp"
       - "27016:27016/udp"
       - "8766:8766/udp"
+      # 10888 es el puerto inter-shard (UDP interno entre contenedores).
+      # No se expone al host — Caves lo alcanza por la red interna de Docker.
     env_file: .env
     environment:
       - SHARD_NAME=Master
@@ -18,11 +19,15 @@ services:
       - ./dedicated_server_mods_setup.lua:/tmp/dedicated_server_mods_setup.lua
       - steam-workshop:/home/steam/.steam/steam/steamapps
     healthcheck:
-      test: ["CMD", "nc", "-zu", "localhost", "10888"]
-      interval: 10s
+      # El puerto 10888 es UDP — nc -z (TCP) nunca funciona contra él.
+      # En su lugar comprobamos que el proceso existe y que el log muestra
+      # "Sim paused" o "Online Server Started", que DST imprime cuando el
+      # mundo ha generado y el shard está listo para aceptar a Caves.
+      test: ["CMD-SHELL", "pgrep -f dontstarve_dedicated > /dev/null && grep -q 'Online Server Started' /data/DoNotStarveTogether/Cluster_1/Master/server_log.txt"]
+      interval: 15s
       timeout: 5s
-      retries: 12
-      start_period: 60s
+      retries: 24        # 24 * 15s = 6 min de margen para generar mundo + descargar mods
+      start_period: 30s
     deploy:
       resources:
         limits:
@@ -34,7 +39,7 @@ services:
     restart: unless-stopped
     depends_on:
       dst-master:
-        condition: service_healthy   # ← espera al healthcheck
+        condition: service_healthy
     ports:
       - "11000:11000/udp"
       - "27017:27017/udp"

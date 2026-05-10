@@ -23,7 +23,7 @@ mkdir -p "$CLUSTER_PATH"
 # Token
 if [ -f "$CLUSTER_PATH/cluster_token.txt" ]; then
     echo "Token detectado en cluster_token.txt."
-elif [ ! -z "${CLUSTER_TOKEN:-}" ]; then
+elif [ -n "${CLUSTER_TOKEN:-}" ]; then
     echo "Configurando CLUSTER_TOKEN desde variable de entorno..."
     echo "$CLUSTER_TOKEN" > "$CLUSTER_PATH/cluster_token.txt"
 else
@@ -32,12 +32,11 @@ fi
 
 # Name & Password
 if [ -f "$CLUSTER_PATH/cluster.ini" ]; then
-    if [ ! -z "${CLUSTER_NAME:-}" ]; then
+    if [ -n "${CLUSTER_NAME:-}" ]; then
         echo "Inyectando CLUSTER_NAME en cluster.ini..."
         sed -i "s/^cluster_name =.*/cluster_name = $CLUSTER_NAME/" "$CLUSTER_PATH/cluster.ini"
     fi
-
-    if [ ! -z "${CLUSTER_PASSWORD:-}" ]; then
+    if [ -n "${CLUSTER_PASSWORD:-}" ]; then
         echo "Inyectando CLUSTER_PASSWORD en cluster.ini..."
         sed -i "s/^cluster_password =.*/cluster_password = $CLUSTER_PASSWORD/" "$CLUSTER_PATH/cluster.ini"
     fi
@@ -46,7 +45,6 @@ fi
 # 1. Instalación / Actualización de Binarios
 if [ "$SKIP_UPDATE" == "false" ]; then
     echo "Preparando script de actualización para SteamCMD..."
-
     cat << EOF > /tmp/dst_update.txt
 @sSteamCmdForcePlatformType linux
 force_install_dir $DST_DIR
@@ -61,49 +59,38 @@ EOF
         echo "SteamCMD falló (intento $attempt/3), reintentando..."
         sleep 5
     done
-else
-    echo "Esperando a que el Master descargue/verifique los binarios..."
-    TIMEOUT=60
-    while [ ! -f "$DST_DIR/bin64/dontstarve_dedicated_server_nullrenderer_x64" ]; do
-        if [ $TIMEOUT -le 0 ]; then
-            echo "ERROR: Tiempo de espera agotado para los binarios."
-            exit 1
-        fi
-        sleep 10
-        TIMEOUT=$((TIMEOUT-1))
-    done
-    echo "¡Binarios detectados!"
 
-    echo "Esperando a que el shard Master esté listo en dst-master:10888..."
-    TIMEOUT=60
-    until nc -zu dst-master 10888 2>/dev/null; do
+else
+    # Caves: esperar a que Master haya dejado los binarios Y los mods listos.
+    # Usamos un fichero centinela que Master crea al terminar su setup.
+    echo "Esperando a que Master termine la instalación de binarios y mods..."
+    TIMEOUT=120
+    while [ ! -f "$DST_DIR/.master_ready" ]; do
         if [ $TIMEOUT -le 0 ]; then
-            echo "ERROR: Master no respondió en el puerto 10888. Abortando."
+            echo "ERROR: Tiempo de espera agotado esperando .master_ready."
             exit 1
         fi
-        echo "  ...Master no listo aún, esperando 5s (intentos restantes: $TIMEOUT)"
+        echo "  ...esperando .master_ready ($TIMEOUT intentos restantes)"
         sleep 5
-        TIMEOUT=$((TIMEOUT-1))
+        TIMEOUT=$((TIMEOUT - 1))
     done
-    echo "¡Master listo!"
+    echo "¡Master listo (binarios y mods disponibles)!"
 fi
 
 # 2. Descarga de mods via SteamCMD (Solo en el Master)
 if [ "$SHARD_NAME" == "Master" ]; then
-    # Restaurar dedicated_server_mods_setup.lua (app_update validate lo borra)
+    # app_update validate puede haber borrado dedicated_server_mods_setup.lua; restaurarlo
     if [ -f "$MODS_SETUP_SRC" ]; then
         echo "Restaurando dedicated_server_mods_setup.lua..."
         cp "$MODS_SETUP_SRC" "$DST_DIR/mods/dedicated_server_mods_setup.lua"
     fi
 
-    # Extraer IDs de mods del archivo de setup
     MODS_FILE="$DST_DIR/mods/dedicated_server_mods_setup.lua"
     if [ -f "$MODS_FILE" ]; then
         MOD_IDS=$(grep -oP '(?<=ServerModSetup\(")[0-9]+(?="\))' "$MODS_FILE" || true)
 
-        if [ ! -z "$MOD_IDS" ]; then
+        if [ -n "$MOD_IDS" ]; then
             echo "Descargando mods via SteamCMD..."
-
             {
                 echo "@sSteamCmdForcePlatformType linux"
                 echo "login anonymous"
@@ -113,9 +100,9 @@ if [ "$SHARD_NAME" == "Master" ]; then
                 echo "quit"
             } > /tmp/dst_mods.txt
 
-            /home/steam/steamcmd/steamcmd.sh +runscript /tmp/dst_mods.txt || echo "AVISO: Algún mod pudo no descargarse correctamente."
+            /home/steam/steamcmd/steamcmd.sh +runscript /tmp/dst_mods.txt \
+                || echo "AVISO: Algún mod pudo no descargarse correctamente."
 
-            # Copiar mods descargados a la carpeta de mods del servidor
             WORKSHOP_DIR="/home/steam/.steam/steam/steamapps/workshop/content/322330"
             echo "Copiando mods a $DST_DIR/mods/..."
             for MOD_ID in $MOD_IDS; do
@@ -133,10 +120,13 @@ if [ "$SHARD_NAME" == "Master" ]; then
             echo "AVISO: No se encontraron IDs de mods en $MODS_FILE."
         fi
     fi
+
+    # Centinela: indicar a Caves que binarios y mods están listos
+    touch "$DST_DIR/.master_ready"
+    echo "✓ Centinela .master_ready creado."
 fi
 
 # 2b. Propagar modoverrides.lua al directorio del shard
-# DST busca modoverrides.lua dentro de cada shard (Master/ o Caves/), no en la raíz del cluster
 SHARD_PATH="$CLUSTER_PATH/$SHARD_NAME"
 mkdir -p "$SHARD_PATH"
 if [ -f "$CLUSTER_PATH/modoverrides.lua" ]; then
@@ -146,10 +136,48 @@ if [ -f "$CLUSTER_PATH/modoverrides.lua" ]; then
 elif [ -f "$SHARD_PATH/modoverrides.lua" ]; then
     echo "✓ modoverrides.lua ya existe en $SHARD_PATH."
 else
-    echo "AVISO: No se encontró modoverrides.lua. Los mods no estarán activos aunque se hayan descargado."
+    echo "AVISO: No se encontró modoverrides.lua. Los mods no estarán activos."
 fi
 
-# 3. Enlaces de librerías (Necesario para 64 bits)
+# 2c. Generar server.ini del shard si no existe o está vacío
+SERVER_INI="$SHARD_PATH/server.ini"
+if [ ! -s "$SERVER_INI" ]; then
+    echo "Generando $SERVER_INI..."
+    if [ "$SHARD_NAME" == "Master" ]; then
+        cat > "$SERVER_INI" << 'SERVEREOF'
+[NETWORK]
+server_port = 10999
+
+[SHARD]
+is_master = true
+name = Master
+id = 1
+
+[STEAM]
+master_server_port = 27016
+authentication_port = 8766
+SERVEREOF
+    else
+        cat > "$SERVER_INI" << 'SERVEREOF'
+[NETWORK]
+server_port = 11000
+
+[SHARD]
+is_master = false
+name = Caves
+id = 2
+master_ip = dst-master
+master_port = 10888
+
+[STEAM]
+master_server_port = 27017
+authentication_port = 8767
+SERVEREOF
+    fi
+    echo "✓ $SERVER_INI generado."
+fi
+
+# 3. Enlaces de librerías
 mkdir -p /home/steam/.steam/sdk64
 ln -sf /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
