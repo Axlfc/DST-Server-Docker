@@ -1,5 +1,7 @@
 # DST Dedicated Server Docker (Master & Caves)
 
+> ⚠️ **Unofficial community project.** Not affiliated with or endorsed by Klei Entertainment.
+
 Este repositorio contiene una configuración optimizada y lista para usar de un servidor dedicado de **Don't Starve Together** utilizando Docker. Está diseñado para ser **idempotente** (siempre funciona igual) y **portable** entre Windows y Linux (CachyOS).
 
 ## 🚀 Características
