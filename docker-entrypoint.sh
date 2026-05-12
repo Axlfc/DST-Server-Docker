@@ -42,6 +42,42 @@ if [ -f "$CLUSTER_PATH/cluster.ini" ]; then
     fi
 fi
 
+# Symlink steamclient.so
+mkdir -p /home/steam/.steam/sdk64
+ln -sf /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
+echo "✓ Symlink steamclient.so configurado."
+
+# Pre-crear estructura de directorios de Steam y libraryfolders.vdf.
+# Sin esto, cuando SteamCMD se reinicia a sí mismo (auto-update) pierde
+# el contexto de force_install_dir y no encuentra las library folders.
+STEAM_ROOT="/home/steam/.steam/steam"
+mkdir -p "$STEAM_ROOT/steamapps"
+mkdir -p "$DST_DIR"
+
+if [ ! -f "$STEAM_ROOT/steamapps/libraryfolders.vdf" ]; then
+    echo "Creando libraryfolders.vdf..."
+    cat > "$STEAM_ROOT/steamapps/libraryfolders.vdf" << 'EOF'
+"libraryfolders"
+{
+    "0"
+    {
+        "path"      "/home/steam/.steam/steam"
+        "label"     ""
+        "totalsize" "0"
+        "apps"      {}
+    }
+    "1"
+    {
+        "path"      "/opt/dst_server"
+        "label"     ""
+        "totalsize" "0"
+        "apps"      {}
+    }
+}
+EOF
+    echo "✓ libraryfolders.vdf creado."
+fi
+
 # 1. Instalación / Actualización de Binarios
 if [ "$SKIP_UPDATE" == "false" ]; then
     echo "Preparando script de actualización para SteamCMD..."
@@ -60,10 +96,18 @@ EOF
         sleep 5
     done
 
+    # app_update validate puede haber borrado dedicated_server_mods_setup.lua; restaurarlo
+    if [ -f "$MODS_SETUP_SRC" ]; then
+        echo "Restaurando dedicated_server_mods_setup.lua..."
+        cp "$MODS_SETUP_SRC" "$DST_DIR/mods/dedicated_server_mods_setup.lua"
+    fi
+
+    # Centinela para Caves
+    touch "$DST_DIR/.master_ready"
+    echo "✓ Centinela .master_ready creado."
+
 else
-    # Caves: esperar a que Master haya dejado los binarios Y los mods listos.
-    # Usamos un fichero centinela que Master crea al terminar su setup.
-    echo "Esperando a que Master termine la instalación de binarios y mods..."
+    echo "Esperando a que Master termine la instalación de binarios..."
     TIMEOUT=120
     while [ ! -f "$DST_DIR/.master_ready" ]; do
         if [ $TIMEOUT -le 0 ]; then
@@ -74,59 +118,10 @@ else
         sleep 5
         TIMEOUT=$((TIMEOUT - 1))
     done
-    echo "¡Master listo (binarios y mods disponibles)!"
+    echo "¡Master listo!"
 fi
 
-# 2. Descarga de mods via SteamCMD (Solo en el Master)
-if [ "$SHARD_NAME" == "Master" ]; then
-    # app_update validate puede haber borrado dedicated_server_mods_setup.lua; restaurarlo
-    if [ -f "$MODS_SETUP_SRC" ]; then
-        echo "Restaurando dedicated_server_mods_setup.lua..."
-        cp "$MODS_SETUP_SRC" "$DST_DIR/mods/dedicated_server_mods_setup.lua"
-    fi
-
-    MODS_FILE="$DST_DIR/mods/dedicated_server_mods_setup.lua"
-    if [ -f "$MODS_FILE" ]; then
-        MOD_IDS=$(grep -oP '(?<=ServerModSetup\(")[0-9]+(?="\))' "$MODS_FILE" || true)
-
-        if [ -n "$MOD_IDS" ]; then
-            echo "Descargando mods via SteamCMD..."
-            {
-                echo "@sSteamCmdForcePlatformType linux"
-                echo "login anonymous"
-                for MOD_ID in $MOD_IDS; do
-                    echo "workshop_download_item 322330 $MOD_ID"
-                done
-                echo "quit"
-            } > /tmp/dst_mods.txt
-
-            /home/steam/steamcmd/steamcmd.sh +runscript /tmp/dst_mods.txt \
-                || echo "AVISO: Algún mod pudo no descargarse correctamente."
-
-            WORKSHOP_DIR="/home/steam/.steam/steam/steamapps/workshop/content/322330"
-            echo "Copiando mods a $DST_DIR/mods/..."
-            for MOD_ID in $MOD_IDS; do
-                MOD_SRC="$WORKSHOP_DIR/$MOD_ID"
-                MOD_DST="$DST_DIR/mods/workshop-$MOD_ID"
-                if [ -d "$MOD_SRC" ]; then
-                    echo "  ✓ Copiando mod $MOD_ID..."
-                    rm -rf "$MOD_DST"
-                    cp -r "$MOD_SRC" "$MOD_DST"
-                else
-                    echo "  ✗ AVISO: No se encontró el mod $MOD_ID en $MOD_SRC"
-                fi
-            done
-        else
-            echo "AVISO: No se encontraron IDs de mods en $MODS_FILE."
-        fi
-    fi
-
-    # Centinela: indicar a Caves que binarios y mods están listos
-    touch "$DST_DIR/.master_ready"
-    echo "✓ Centinela .master_ready creado."
-fi
-
-# 2b. Propagar modoverrides.lua al directorio del shard
+# 2. Propagar modoverrides.lua al directorio del shard
 SHARD_PATH="$CLUSTER_PATH/$SHARD_NAME"
 mkdir -p "$SHARD_PATH"
 if [ -f "$CLUSTER_PATH/modoverrides.lua" ]; then
@@ -139,7 +134,7 @@ else
     echo "AVISO: No se encontró modoverrides.lua. Los mods no estarán activos."
 fi
 
-# 2c. Generar server.ini del shard si no existe o está vacío
+# 3. Generar server.ini del shard si no existe o está vacío
 SERVER_INI="$SHARD_PATH/server.ini"
 if [ ! -s "$SERVER_INI" ]; then
     echo "Generando $SERVER_INI..."
@@ -177,11 +172,8 @@ SERVEREOF
     echo "✓ $SERVER_INI generado."
 fi
 
-# 3. Enlaces de librerías
-mkdir -p /home/steam/.steam/sdk64
-ln -sf /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
-
 # 4. Ejecución
+# Sin -skip_update_server_mods: DST descarga/verifica los mods al arrancar.
 cd "$DST_DIR/bin64"
 export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:.:${DST_DIR}/bin64/lib64"
 
@@ -191,5 +183,4 @@ exec ./dontstarve_dedicated_server_nullrenderer_x64 \
     -persistent_storage_root /data \
     -conf_dir DoNotStarveTogether \
     -cluster Cluster_1 \
-    -shard "$SHARD_NAME" \
-    -skip_update_server_mods
+    -shard "$SHARD_NAME"

@@ -5,6 +5,9 @@ KLEI     1 return {
 	overrides = {
 		basicresource_regrowth = "always",
 		boons = "often",
+		ghostsanitydrain = "none",
+		portalresurection = "always",
+		resettime = "none",
 		spawnprotection = "always",
 		touchstone = "often",
 		world_size = "huge",

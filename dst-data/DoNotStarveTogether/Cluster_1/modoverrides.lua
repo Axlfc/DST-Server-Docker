@@ -12,4 +12,5 @@ return {
     ["workshop-944738665"] = { enabled = true },
     ["workshop-1271089343"] = { enabled = true },
     ["workshop-943773166"] = { enabled = true },
+    ["workshop-2075943614"] = { enabled = true },
 }
